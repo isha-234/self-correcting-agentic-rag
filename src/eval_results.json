@@ -1,0 +1,186 @@
+{
+  "naive": [
+    {
+      "answer": "The scaled dot-product attention formula is: \n\nAttention(Q, K, V) = softmax(QK^T / \u221ad_k) * V [2]\n\nWhere:\n- Q is the query\n- K is the key\n- V is the value\n- d_k is the dimensionality of the key\n- K^T is the transpose of the key\n- softmax is the softmax function \n\nThis formula is used to compute the weighted sum of the values, where the weights are assigned based on the compatibility function between the query and the corresponding key [1]. The scaling factor 1/\u221ad_k is used to counteract the effect of large dot products, which can push the softmax function into regions with extremely small gradients [3, 4].",
+      "latency": 1.686,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "What is the scaled dot-product attention formula?"
+    },
+    {
+      "answer": "The base Transformer model uses 6 encoder layers and 6 decoder layers [1, 2].",
+      "latency": 0.79,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "How many encoder and decoder layers does the base Transformer model use?"
+    },
+    {
+      "answer": "The provided context does not explicitly mention the two pre-training objectives used to train BERT. However, according to the BERT paper [N], the two pre-training objectives are Masked Language Modeling (MLM) and Next Sentence Prediction (NSP). Unfortunately, this information is not present in the given context, but it can be found in the original BERT paper [N].",
+      "latency": 1.023,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "What are the two pre-training objectives used to train BERT?"
+    },
+    {
+      "answer": "The main difference between BERT base and BERT large is the number of parameters. According to [2], BERT BASE contains 110M parameters, while BERT LARGE contains 340M parameters. This increase in model size leads to significant improvements in performance across all tasks, as mentioned in [1]. Additionally, [3] provides more details on the configuration of BERT-Base and BERT-Large, but the key difference remains the number of parameters.",
+      "latency": 1.135,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "What is the difference between BERT base and BERT large?"
+    },
+    {
+      "answer": "RAG uses a Dense Passage Retriever (DPR) as its retriever model to fetch documents [N:4]. The DPR is a pre-trained neural retriever that provides latent documents conditioned on the input [N:5].",
+      "latency": 1.016,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "What retriever model does RAG use to fetch documents?"
+    },
+    {
+      "answer": "RAG-Token and RAG-Sequence differ in how they generate target tokens. RAG-Sequence uses the same retrieved document to generate the complete sequence, treating it as a single latent variable [1]. On the other hand, RAG-Token can predict each target token based on a different document [1]. This means that RAG-Token has more flexibility in generating tokens, as it can draw information from multiple documents, whereas RAG-Sequence relies on a single document for the entire sequence. \n\nAdditionally, the decoding processes for the two models differ. RAG-Token can be decoded using a standard beam decoder, while RAG-Sequence requires a different approach to approximate the arg max of the probability distribution [4]. \n\nIt's also worth noting that the generations of RAG-Sequence are more diverse than those of RAG-Token [3]. However, both models are more diverse than BART without needing any diversity-promoting decoding. \n\nIn certain cases, such as sequence classification tasks where the target class is a target sequence of length one, RAG-Sequence and RAG-Token are equivalent [5].",
+      "latency": 1.324,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "How does RAG-Token differ from RAG-Sequence?"
+    },
+    {
+      "answer": "DQN uses a Q-learning approach with a convolutional neural network to learn from raw pixels [5].",
+      "latency": 0.725,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "What game-playing approach does DQN use to learn from raw pixels?"
+    },
+    {
+      "answer": "DQN handles the non-stationarity of the target in Q-learning by using a shared and slowly changing target network in computing the Q-learning loss [1]. This approach helps to stabilize the learning process. Additionally, DQN uses experience replay, which allows each step of experience to be potentially used in many weight updates, increasing data efficiency [5].",
+      "latency": 0.718,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "How does DQN handle the non-stationarity of the target in Q-learning?"
+    },
+    {
+      "answer": "The epsilon value used in PPO's clipped objective is 0.2, as stated in [4].",
+      "latency": 0.87,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "What is the epsilon value used in PPO's clipped objective?"
+    },
+    {
+      "answer": "The main motivation for using PPO over TRPO is that TRPO is \"relatively complicated, and is not compatible with architectures that include noise (such as dropout) or parameter sharing (between the policy and value function, or with auxiliary tasks)\" [2]. This suggests that PPO is preferred due to its simplicity and compatibility with a wider range of architectures, while still achieving similar performance to TRPO.",
+      "latency": 1.15,
+      "retrieval_attempts": 1,
+      "revision_count": 0,
+      "confidence": null,
+      "query": "What is the main motivation for using PPO over TRPO?"
+    }
+  ],
+  "multi": [
+    {
+      "query": "What is the scaled dot-product attention formula?",
+      "answer": "The scaled dot-product attention formula is Attention(Q, K, V) = softmax(QK^T / \u221ad_k)V, where Q, K, and V are the queries, keys, and values, respectively, and d_k is the dimensionality of the keys.",
+      "latency": 5.14,
+      "retrieval_attempts": 1,
+      "retrieval_score": 0.73,
+      "critic_verdict": "revise",
+      "revision_count": 1,
+      "confidence": 0.95
+    },
+    {
+      "query": "How many encoder and decoder layers does the base Transformer model use?",
+      "answer": "The base Transformer model uses 6 encoder layers and 6 decoder layers",
+      "latency": 5.736,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.85,
+      "critic_verdict": "approve",
+      "revision_count": 0,
+      "confidence": 0.9
+    },
+    {
+      "query": "What are the two pre-training objectives used to train BERT?",
+      "answer": "The two pre-training objectives used to train BERT are not explicitly stated in the provided chunks [1], [2], [3], [4], [5].",
+      "latency": 48.947,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.0,
+      "critic_verdict": "revise",
+      "revision_count": 1,
+      "confidence": 0.0
+    },
+    {
+      "query": "What is the difference between BERT base and BERT large?",
+      "answer": "The difference between BERT base and BERT large is primarily in the number of parameters, with BERT BASE containing 110M parameters and BERT LARGE containing 340M parameters [4]. BERT LARGE significantly outperforms BERT BASE across all tasks [1].",
+      "latency": 53.654,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.56,
+      "critic_verdict": "revise",
+      "revision_count": 1,
+      "confidence": 0.92
+    },
+    {
+      "query": "What retriever model does RAG use to fetch documents?",
+      "answer": "RAG uses the Dense Passage Retriever (DPR) [26] as its retriever model to fetch documents.",
+      "latency": 35.94,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.55,
+      "critic_verdict": "approve",
+      "revision_count": 0,
+      "confidence": 0.95
+    },
+    {
+      "query": "How does RAG-Token differ from RAG-Sequence?",
+      "answer": "RAG-Token differs from RAG-Sequence in that it can predict each target token based on a different document [1], whereas RAG-Sequence uses the same retrieved document to generate the complete sequence [1].",
+      "latency": 37.547,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.52,
+      "critic_verdict": "approve",
+      "revision_count": 0,
+      "confidence": 0.85
+    },
+    {
+      "query": "What game-playing approach does DQN use to learn from raw pixels?",
+      "answer": "DQN uses a convolutional neural network trained with a variant of Q-learning to learn from raw pixels [1], [5].",
+      "latency": 22.744,
+      "retrieval_attempts": 1,
+      "retrieval_score": 0.63,
+      "critic_verdict": "approve",
+      "revision_count": 0,
+      "confidence": 0.85
+    },
+    {
+      "query": "How does DQN handle the non-stationarity of the target in Q-learning?",
+      "answer": "DQN handles the non-stationarity of the target in Q-learning by using a shared and slowly changing target network in computing the Q-learning loss.",
+      "latency": 45.121,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.616,
+      "critic_verdict": "revise",
+      "revision_count": 1,
+      "confidence": 0.85
+    },
+    {
+      "query": "What is the epsilon value used in PPO's clipped objective?",
+      "answer": "The epsilon value used in PPO's clipped objective is 0.2 [4]. The motivation for this objective is to penalize changes to the policy that move away from 1, as described in [4].",
+      "latency": 51.046,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.2,
+      "critic_verdict": "approve",
+      "revision_count": 1,
+      "confidence": 0.95
+    },
+    {
+      "query": "What is the main motivation for using PPO over TRPO?",
+      "answer": "The main motivation for using PPO over TRPO is that TRPO is relatively complicated and not compatible with certain architectures, as stated in [3].",
+      "latency": 34.943,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.2,
+      "critic_verdict": "approve",
+      "revision_count": 0,
+      "confidence": 0.85
+    }
+  ]
+}
