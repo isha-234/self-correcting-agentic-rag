@@ -1,80 +1,80 @@
 {
   "naive": [
     {
-      "answer": "The scaled dot-product attention formula is: \n\nAttention(Q, K, V) = softmax(QK^T / \u221ad_k) * V [2]\n\nWhere:\n- Q is the query\n- K is the key\n- V is the value\n- d_k is the dimensionality of the key\n- K^T is the transpose of the key\n- softmax is the softmax function \n\nThis formula is used to compute the weighted sum of the values, where the weights are assigned based on the compatibility function between the query and the corresponding key [1]. The scaling factor 1/\u221ad_k is used to counteract the effect of large dot products, which can push the softmax function into regions with extremely small gradients [3, 4].",
-      "latency": 1.686,
+      "answer": "The scaled dot-product attention formula is: \n\nAttention(Q, K, V) = softmax(QK^T / \u221ad_k) * V [2]\n\nWhere:\n- Q is the query\n- K is the key\n- V is the value\n- d_k is the dimensionality of the key\n- K^T is the transpose of the key\n- softmax is the softmax function \n\nThis formula is used to compute the weighted sum of the values, where the weight assigned to each value is computed by a compatibility function of the query with the corresponding key [1]. The scaling factor of 1/\u221ad_k is used to counteract the effect of large dot products, which can push the softmax function into regions where it has extremely small gradients [3, 4].",
+      "latency": 1.231,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "What is the scaled dot-product attention formula?"
     },
     {
-      "answer": "The base Transformer model uses 6 encoder layers and 6 decoder layers [1, 2].",
-      "latency": 0.79,
+      "answer": "The base Transformer model uses 6 encoder layers and 6 decoder layers. [1], [2]",
+      "latency": 0.548,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "How many encoder and decoder layers does the base Transformer model use?"
     },
     {
-      "answer": "The provided context does not explicitly mention the two pre-training objectives used to train BERT. However, according to the BERT paper [N], the two pre-training objectives are Masked Language Modeling (MLM) and Next Sentence Prediction (NSP). Unfortunately, this information is not present in the given context, but it can be found in the original BERT paper [N].",
-      "latency": 1.023,
+      "answer": "The provided context does not explicitly mention the two pre-training objectives used to train BERT. However, it does discuss the pre-training procedure and the differences between BERT and other models, such as GPT [3]. To find the pre-training objectives, we need to look at the original BERT paper, which is referenced as [1] source=1810.04805v2.pdf. \n\nAccording to the BERT paper [N], the two pre-training objectives are: \n1. Masked Language Modeling (MLM): This objective involves masking some of the input tokens and predicting them.\n2. Next Sentence Prediction (NSP): This objective involves predicting whether two input sentences are adjacent or not.\n\nThese objectives are not explicitly mentioned in the provided context, but they are well-known as the pre-training objectives used to train BERT [N].",
+      "latency": 0.978,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "What are the two pre-training objectives used to train BERT?"
     },
     {
-      "answer": "The main difference between BERT base and BERT large is the number of parameters. According to [2], BERT BASE contains 110M parameters, while BERT LARGE contains 340M parameters. This increase in model size leads to significant improvements in performance across all tasks, as mentioned in [1]. Additionally, [3] provides more details on the configuration of BERT-Base and BERT-Large, but the key difference remains the number of parameters.",
-      "latency": 1.135,
+      "answer": "The main difference between BERT base and BERT large is the number of parameters. BERT BASE contains 110M parameters [2], while BERT LARGE contains 340M parameters [2]. This increase in model size leads to significant improvements in performance, with BERT LARGE outperforming BERT BASE across all tasks [1]. Additionally, the number of parameters for BERT-Base and BERT-Large are also listed in [3] as 109M and 355M, respectively, which is consistent with the information provided in [2].",
+      "latency": 0.965,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "What is the difference between BERT base and BERT large?"
     },
     {
-      "answer": "RAG uses a Dense Passage Retriever (DPR) as its retriever model to fetch documents [N:4]. The DPR is a pre-trained neural retriever that provides latent documents conditioned on the input [N:5].",
-      "latency": 1.016,
+      "answer": "RAG uses a Dense Passage Retriever (DPR) [N: [4], [5]] as its retriever model to fetch documents. The DPR is initialized using retrieval supervision on Natural Questions and TriviaQA [N: [4]].",
+      "latency": 0.804,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "What retriever model does RAG use to fetch documents?"
     },
     {
-      "answer": "RAG-Token and RAG-Sequence differ in how they generate target tokens. RAG-Sequence uses the same retrieved document to generate the complete sequence, treating it as a single latent variable [1]. On the other hand, RAG-Token can predict each target token based on a different document [1]. This means that RAG-Token has more flexibility in generating tokens, as it can draw information from multiple documents, whereas RAG-Sequence relies on a single document for the entire sequence. \n\nAdditionally, the decoding processes for the two models differ. RAG-Token can be decoded using a standard beam decoder, while RAG-Sequence requires a different approach to approximate the arg max of the probability distribution [4]. \n\nIt's also worth noting that the generations of RAG-Sequence are more diverse than those of RAG-Token [3]. However, both models are more diverse than BART without needing any diversity-promoting decoding. \n\nIn certain cases, such as sequence classification tasks where the target class is a target sequence of length one, RAG-Sequence and RAG-Token are equivalent [5].",
-      "latency": 1.324,
+      "answer": "RAG-Token and RAG-Sequence differ in how they use retrieved documents to generate target tokens. \n\nRAG-Sequence uses the same retrieved document to generate the complete sequence, treating it as a single latent variable [1]. \n\nIn contrast, RAG-Token can predict each target token based on a different document [1]. This means that RAG-Token has more flexibility in choosing the information it uses to generate each token, whereas RAG-Sequence relies on a single document for the entire sequence.\n\nThis difference is also reflected in their decoding procedures, with RAG-Token using a standard beam decoder and RAG-Sequence requiring a different approach [4]. \n\nAdditionally, the two models have different performance characteristics, with RAG-Token performing better with more retrieved documents, but at the expense of Bleu-1 score, whereas the effect is less pronounced for RAG-Sequence [2]. RAG-Sequence also generates more diverse text than RAG-Token [3]. \n\nHowever, in certain cases, such as sequence classification tasks with a target sequence of length one, RAG-Sequence and RAG-Token are equivalent [5].",
+      "latency": 1.722,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "How does RAG-Token differ from RAG-Sequence?"
     },
     {
-      "answer": "DQN uses a Q-learning approach with a convolutional neural network to learn from raw pixels [5].",
-      "latency": 0.725,
+      "answer": "DQN uses a Q-learning approach with a convolutional neural network to learn from raw pixels [5]. This approach involves training a model whose input is raw pixels and whose output is a value function estimating future rewards [5].",
+      "latency": 0.879,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "What game-playing approach does DQN use to learn from raw pixels?"
     },
     {
-      "answer": "DQN handles the non-stationarity of the target in Q-learning by using a shared and slowly changing target network in computing the Q-learning loss [1]. This approach helps to stabilize the learning process. Additionally, DQN uses experience replay, which allows each step of experience to be potentially used in many weight updates, increasing data efficiency [5].",
-      "latency": 0.718,
+      "answer": "DQN handles the non-stationarity of the target in Q-learning by using a shared and slowly changing target network in computing the Q-learning loss [1]. This means that the target network is updated slowly, which helps to stabilize the learning process and reduce the non-stationarity of the target.",
+      "latency": 0.75,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "How does DQN handle the non-stationarity of the target in Q-learning?"
     },
     {
-      "answer": "The epsilon value used in PPO's clipped objective is 0.2, as stated in [4].",
-      "latency": 0.87,
+      "answer": "The epsilon value used in PPO's clipped objective is 0.2 [4].",
+      "latency": 0.829,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
       "query": "What is the epsilon value used in PPO's clipped objective?"
     },
     {
-      "answer": "The main motivation for using PPO over TRPO is that TRPO is \"relatively complicated, and is not compatible with architectures that include noise (such as dropout) or parameter sharing (between the policy and value function, or with auxiliary tasks)\" [2]. This suggests that PPO is preferred due to its simplicity and compatibility with a wider range of architectures, while still achieving similar performance to TRPO.",
-      "latency": 1.15,
+      "answer": "The main motivation for using PPO (Proximal Policy Optimization) over TRPO (Trust Region Policy Optimization) is that TRPO is \"relatively complicated, and is not compatible with architectures that include noise (such as dropout) or parameter sharing (between the policy and value function, or with auxiliary tasks)\" [2]. This suggests that PPO is preferred for its simplicity and flexibility, while still achieving similar data efficiency and reliable performance to TRPO.",
+      "latency": 0.92,
       "retrieval_attempts": 1,
       "revision_count": 0,
       "confidence": null,
@@ -84,103 +84,173 @@
   "multi": [
     {
       "query": "What is the scaled dot-product attention formula?",
-      "answer": "The scaled dot-product attention formula is Attention(Q, K, V) = softmax(QK^T / \u221ad_k)V, where Q, K, and V are the queries, keys, and values, respectively, and d_k is the dimensionality of the keys.",
-      "latency": 5.14,
+      "answer": "The scaled dot-product attention formula is Attention(Q, K, V) = softmax(QK^T / \u221ad_k) * V [2], where Q, K, and V are the queries, keys, and values, and d_k is the dimensionality of the keys [2].",
+      "contexts": [
+        "Scaled Dot-Product Attention\n Multi-Head Attention\nFigure 2: (left) Scaled Dot-Product Attention. (right) Multi-Head Attention consists of several\nattention layers running in parallel.\nof the values, where the weight assigned to each value is computed by a compatibility function of the\nquery with the corresponding key.\n3.2.1 Scaled Dot-Product Attention\nWe call our particular attention \"Scaled Dot-Product Attention\" (Figure 2). The input consists of",
+        "Attention( Q, K, V ) = softmax(QKT\n\u221adk)V (1)\nThe two most commonly used attention functions are additive attention [ 2], and dot-product (multi-\nplicative) attention. Dot-product attention is identical to our algorithm, except for the scaling factor\nof1\u221adk. Additive attention computes the compatibility function using a feed-forward network with\na single hidden layer. While the two are similar in theoretical complexity, dot-product attention is",
+        "much faster and more space-efficient in practice, since it can be implemented using highly optimized\nmatrix multiplication code.\nWhile for small values of dkthe two mechanisms perform similarly, additive attention outperforms\ndot product attention without scaling for larger values of dk[3]. We suspect that for large values of\ndk, the dot products grow large in magnitude, pushing the softmax function into regions where it has",
+        "queries, keys and values we then perform the attention function in parallel, yielding dv-dimensional\n4To illustrate why the dot products get large, assume that the components of qandkare independent random\nvariables with mean 0and variance 1. Then their dot product, q\u00b7k=Pdk\ni=1qiki, has mean 0and variance dk.\n4",
+        "extremely small gradients4. To counteract this effect, we scale the dot products by1\u221adk.\n3.2.2 Multi-Head Attention\nInstead of performing a single attention function with dmodel-dimensional keys, values and queries,\nwe found it beneficial to linearly project the queries, keys and values htimes with different, learned\nlinear projections to dk,dkanddvdimensions, respectively. On each of these projected versions of"
+      ],
+      "latency": 3.31,
       "retrieval_attempts": 1,
-      "retrieval_score": 0.73,
+      "retrieval_score": 0.703,
       "critic_verdict": "revise",
       "revision_count": 1,
-      "confidence": 0.95
+      "confidence": 0.92
     },
     {
       "query": "How many encoder and decoder layers does the base Transformer model use?",
-      "answer": "The base Transformer model uses 6 encoder layers and 6 decoder layers",
-      "latency": 5.736,
-      "retrieval_attempts": 2,
-      "retrieval_score": 0.85,
+      "answer": "The base Transformer model uses 6 encoder layers and 6 decoder layers [1, 2].",
+      "contexts": [
+        "Figure 1: The Transformer - model architecture.\nThe Transformer follows this overall architecture using stacked self-attention and point-wise, fully\nconnected layers for both the encoder and decoder, shown in the left and right halves of Figure 1,\nrespectively.\n3.1 Encoder and Decoder Stacks\nEncoder: The encoder is composed of a stack of N= 6 identical layers. Each layer has two\nsub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-",
+        "Decoder: The decoder is also composed of a stack of N= 6identical layers. In addition to the two\nsub-layers in each encoder layer, the decoder inserts a third sub-layer, which performs multi-head\nattention over the output of the encoder stack. Similar to the encoder, we employ residual connections\naround each of the sub-layers, followed by layer normalization. We also modify the self-attention\nsub-layer in the decoder stack to prevent positions from attending to subsequent positions. This",
+        "architectures from the literature. We estimate the number of floating point operations used to train a\nmodel by multiplying the training time, the number of GPUs used, and an estimate of the sustained\nsingle-precision floating-point capacity of each GPU5.\n6.2 Model Variations\nTo evaluate the importance of different components of the Transformer, we varied our base model\nin different ways, measuring the change in performance on English-to-German translation on the",
+        "guage modeling by using a stack of Transformer decoders. Since then, Transformer-based language\nmodels have dominated NLP, achieving the state-of-the-art in many tasks. A new paradigm emerged\nwith BERT (Devlin et al., 2019b) and GPT-2 (Radford et al., b) \u2013 both are large Transformer lan-\n8",
+        "scribed in Vaswani et al. (2017) and released in\nthetensor2tensor library.1Because the use\nof Transformers has become common and our im-\nplementation is almost identical to the original,\nwe will omit an exhaustive background descrip-\ntion of the model architecture and refer readers to\nVaswani et al. (2017) as well as excellent guides\nsuch as \u201cThe Annotated Transformer.\u201d2\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as"
+      ],
+      "latency": 1.697,
+      "retrieval_attempts": 1,
+      "retrieval_score": 0.73,
       "critic_verdict": "approve",
       "revision_count": 0,
-      "confidence": 0.9
+      "confidence": 0.87
     },
     {
       "query": "What are the two pre-training objectives used to train BERT?",
-      "answer": "The two pre-training objectives used to train BERT are not explicitly stated in the provided chunks [1], [2], [3], [4], [5].",
-      "latency": 48.947,
+      "answer": "The two pre-training objectives used to train BERT are masked language modeling and next sentence prediction.",
+      "contexts": [
+        "Unlabeled Sentence A and B Pair SQuAD \nQuestion Answer Pair NER MNLI Figure 1: Overall pre-training and \ufb01ne-tuning procedures for BERT. Apart from output layers, the same architec-\ntures are used in both pre-training and \ufb01ne-tuning. The same pre-trained model parameters are used to initialize\nmodels for different down-stream tasks. During \ufb01ne-tuning, all parameters are \ufb01ne-tuned. [CLS] is a special",
+        "learning objectives used in Jernite et al. (2017) and\nLogeswaran and Lee (2018). However, in prior\nwork, only sentence embeddings are transferred to\ndown-stream tasks, where BERT transfers all pa-\nrameters to initialize end-task model parameters.\nPre-training data The pre-training procedure\nlargely follows the existing literature on language\nmodel pre-training. For the pre-training corpus we\nuse the BooksCorpus (800M words) (Zhu et al.,\n2015) and English Wikipedia (2,500M words).",
+        "BERT is conceptually simple and empirically\npowerful. It obtains new state-of-the-art re-\nsults on eleven natural language processing\ntasks, including pushing the GLUE score to\n80.5% (7.7% point absolute improvement),\nMultiNLI accuracy to 86.7% (4.6% absolute\nimprovement), SQuAD v1.1 question answer-\ning Test F1 to 93.2 (1.5 point absolute im-\nprovement) and SQuAD v2.0 Test F1 to 83.1\n(5.1 point absolute improvement).\n1 Introduction\nLanguage model pre-training has been shown to",
+        "framework: pre-training and \ufb01ne-tuning . Dur-\ning pre-training, the model is trained on unlabeled\ndata over different pre-training tasks. For \ufb01ne-\ntuning, the BERT model is \ufb01rst initialized with\nthe pre-trained parameters, and all of the param-\neters are \ufb01ne-tuned using labeled data from the\ndownstream tasks. Each downstream task has sep-\narate \ufb01ne-tuned models, even though they are ini-\ntialized with the same pre-trained parameters. The\nquestion-answering example in Figure 1 will serve",
+        "pretraining objective. Our current objective weights every token equally and lacks a notion of what is most important to\npredict and what is less important. [ RRS20 ] demonstrate bene\ufb01ts of customizing prediction to entities of interest. Also,\nwith self-supervised objectives, task speci\ufb01cation relies on forcing the desired task into a prediction problem, whereas\nultimately, useful language systems (for example virtual assistants) might be better thought of as taking goal-directed"
+      ],
+      "latency": 40.443,
       "retrieval_attempts": 2,
-      "retrieval_score": 0.0,
+      "retrieval_score": 0.48,
       "critic_verdict": "revise",
       "revision_count": 1,
       "confidence": 0.0
     },
     {
       "query": "What is the difference between BERT base and BERT large?",
-      "answer": "The difference between BERT base and BERT large is primarily in the number of parameters, with BERT BASE containing 110M parameters and BERT LARGE containing 340M parameters [4]. BERT LARGE significantly outperforms BERT BASE across all tasks [1].",
-      "latency": 53.654,
-      "retrieval_attempts": 2,
-      "retrieval_score": 0.56,
-      "critic_verdict": "revise",
-      "revision_count": 1,
-      "confidence": 0.92
-    },
-    {
-      "query": "What retriever model does RAG use to fetch documents?",
-      "answer": "RAG uses the Dense Passage Retriever (DPR) [26] as its retriever model to fetch documents.",
-      "latency": 35.94,
-      "retrieval_attempts": 2,
-      "retrieval_score": 0.55,
-      "critic_verdict": "approve",
-      "revision_count": 0,
-      "confidence": 0.95
-    },
-    {
-      "query": "How does RAG-Token differ from RAG-Sequence?",
-      "answer": "RAG-Token differs from RAG-Sequence in that it can predict each target token based on a different document [1], whereas RAG-Sequence uses the same retrieved document to generate the complete sequence [1].",
-      "latency": 37.547,
-      "retrieval_attempts": 2,
-      "retrieval_score": 0.52,
-      "critic_verdict": "approve",
-      "revision_count": 0,
-      "confidence": 0.85
-    },
-    {
-      "query": "What game-playing approach does DQN use to learn from raw pixels?",
-      "answer": "DQN uses a convolutional neural network trained with a variant of Q-learning to learn from raw pixels [1], [5].",
-      "latency": 22.744,
+      "answer": "The main difference between BERT base and BERT large is the number of parameters, with BERT base containing 110M parameters [2] and BERT large containing 340M parameters [2]. BERT large also significantly outperforms BERT base across all tasks [1].",
+      "contexts": [
+        "BERT BASE and OpenAI GPT are nearly identical\nin terms of model architecture apart from the at-\ntention masking. For the largest and most widely\nreported GLUE task, MNLI, BERT obtains a 4.6%\nabsolute accuracy improvement. On the of\ufb01cial\nGLUE leaderboard10, BERT LARGE obtains a score\nof 80.5, compared to OpenAI GPT, which obtains\n72.8 as of the date of writing.\nWe \ufb01nd that BERT LARGE signi\ufb01cantly outper-\nforms BERT BASE across all tasks, especially those",
+        "Vaswani et al. (2017) is (L=6, H=1024, A=16)\nwith 100M parameters for the encoder, and the\nlargest Transformer we have found in the literature\nis (L=64, H=512, A=2) with 235M parameters\n(Al-Rfou et al., 2018). By contrast, BERT BASE\ncontains 110M parameters and BERT LARGE con-\ntains 340M parameters.\nIt has long been known that increasing the\nmodel size will lead to continual improvements\non large-scale tasks such as machine translation\nand language modeling, which is demonstrated",
+        "BERT-Base 1.89E+00 1.64E+20 109 250 6 3 2 1.0\nBERT-Large 6.16E+00 5.33E+20 355 250 6 3 2 1.0\nRoBERTa-Base 1.74E+01 1.50E+21 125 2,000 6 3 2 1.0\nRoBERTa-Large 4.93E+01 4.26E+21 355 2,000 6 3 2 1.0\nGPT-3 Small 2.60E+00 2.25E+20 125 300 6 3 2 1.0\nGPT-3 Medium 7.42E+00 6.41E+20 356 300 6 3 2 1.0\nGPT-3 Large 1.58E+01 1.37E+21 760 300 6 3 2 1.0\nGPT-3 XL 2.75E+01 2.38E+21 1,320 300 6 3 2 1.0\nGPT-3 2.7B 5.52E+01 4.77E+21 2,650 300 6 3 2 1.0\nGPT-3 6.7B 1.39E+02 1.20E+22 6,660 300 6 3 2 1.0",
+        "set (125K examples), whereas BERT++ was \ufb01rst \ufb01ne-tuned on MultiNLI (392K examples) and SWAG (113K examples)\nbefore further \ufb01ne-tuning on the SuperGLUE training set (for a total of 630K \ufb01ne-tuning examples). We \ufb01nd the\ndifference in performance between the BERT-Large and BERT++ to be roughly equivalent to the difference between\nGPT-3 with one example per context versus eight examples per context.",
+        "between how BERT and GPT were trained:\n\u2022 GPT is trained on the BooksCorpus (800M\nwords); BERT is trained on the BooksCor-\npus (800M words) and Wikipedia (2,500M\nwords).\n\u2022 GPT uses a sentence separator ( [SEP] ) and\nclassi\ufb01er token ( [CLS] ) which are only in-\ntroduced at \ufb01ne-tuning time; BERT learns\n[SEP] ,[CLS] and sentence A/Bembed-\ndings during pre-training.\n\u2022 GPT was trained for 1M steps with a batch\nsize of 32,000 words; BERT was trained for\n1M steps with a batch size of 128,000 words."
+      ],
+      "latency": 30.477,
       "retrieval_attempts": 1,
       "retrieval_score": 0.63,
       "critic_verdict": "approve",
       "revision_count": 0,
-      "confidence": 0.85
+      "confidence": 0.92
+    },
+    {
+      "query": "What retriever model does RAG use to fetch documents?",
+      "answer": "RAG uses the Dense Passage Retriever (DPR) model to fetch documents [1], which is a pre-trained neural retriever [2] that provides latent documents conditioned on the input [3].",
+      "contexts": [
+        "the interests of simplicity, we omit them. For Open MS-MARCO, where useful retrieved documents\ncannot always be retrieved, we observe that the model learns to always retrieve a particular set of\ndocuments for questions that are less likely to bene\ufb01t from retrieval, suggesting that null document\nmechanisms may not be necessary for RAG.\nG Parameters\nOur RAG models contain the trainable parameters for the BERT-base query and document encoder of",
+        "state-of-the-art pipeline models which use strong retrieval supervision. Finally, we demonstrate that\nthe non-parametric memory can be replaced to update the models\u2019 knowledge as the world changes.1\n2 Methods\nWe explore RAG models, which use the input sequence xto retrieve text documents zand use them\nas additional context when generating the target sequence y. As shown in Figure 1, our models\nleverage two components: (i) a retriever p\u03b7(z|x)with parameters \u03b7that returns (top-K truncated)",
+        "We build RAG models where the parametric memory is a pre-trained seq2seq transformer, and the\nnon-parametric memory is a dense vector index of Wikipedia, accessed with a pre-trained neural\nretriever. We combine these components in a probabilistic model trained end-to-end (Fig. 1). The\nretriever (Dense Passage Retriever [ 26], henceforth DPR) provides latent documents conditioned on\nthe input, and the seq2seq model (BART [ 32]) then conditions on these latent documents together with",
+        "documents. Figure 3 (right) shows that retrieving more documents leads to higher Rouge-L for\nRAG-Token at the expense of Bleu-1, but the effect is less pronounced for RAG-Sequence.\n10 20 30 40 50\nKR e t r i e v e dD o c s394041424344NQ Exact MatchRAG-Tok\nRAG-Seq\n10 20 30 40 50\nKR e t r i e v e dD o c s4050607080NQ Answer Recall @ KRAG-Tok\nRAG-Seq\nFixed DPR\nBM25\n10 20 30 40 50\nKR e t r i e v e dD o c s4850525456Bleu-1 / Rouge-L scoreRAG-Tok R-L\nRAG-Tok B-1\nRAG-Seq R-L\nRAG-Seq B-1",
+        "the generation \ufb02exibility of the \u201cclosed-book\u201d (parametric only) approaches and the performance of\n\"open-book\" retrieval-based approaches. Unlike REALM and T5+SSM, RAG enjoys strong results\nwithout expensive, specialized \u201csalient span masking\u201d pre-training [ 20]. It is worth noting that RAG\u2019s\nretriever is initialized using DPR\u2019s retriever, which uses retrieval supervision on Natural Questions\nand TriviaQA. RAG compares favourably to the DPR QA system, which uses a BERT-based \u201ccross-"
+      ],
+      "latency": 47.943,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.56,
+      "critic_verdict": "approve",
+      "revision_count": 1,
+      "confidence": 0.93
+    },
+    {
+      "query": "How does RAG-Token differ from RAG-Sequence?",
+      "answer": "RAG-Token differs from RAG-Sequence in that it can predict each target token based on a different document [1], whereas RAG-Sequence uses the same retrieved document to generate the complete sequence [1].",
+      "contexts": [
+        "to predict each target token. The second approach, RAG-Token , can predict each target token based\non a different document. In the following, we formally introduce both models and then describe the\np\u03b7andp\u03b8components, as well as the training and decoding procedure.\n2.1 Models\nRAG-Sequence Model The RAG-Sequence model uses the same retrieved document to generate\nthe complete sequence . Technically, it treats the retrieved document as a single latent variable that",
+        "[33,59,39], we also investigate generation diversity by calculating the ratio of distinct ngrams to\ntotal ngrams generated by different models. Table 5 shows that RAG-Sequence\u2019s generations are\nmore diverse than RAG-Token\u2019s, and both are signi\ufb01cantly more diverse than BART without needing\nany diversity-promoting decoding.\nRetrieval Ablations A key feature of RAG is learning to retrieve relevant information for the task.",
+        "2.5 Decoding\nAt test time, RAG-Sequence and RAG-Token require different ways to approximate arg maxyp(y|x).\nRAG-Token The RAG-Token model can be seen as a standard, autoregressive seq2seq genera-\ntor with transition probability: p\u2032\n\u03b8(yi|x,y 1:i\u22121) =\u2211\nz\u2208top-k(p(\u00b7|x))p\u03b7(zi|x)p\u03b8(yi|x,zi,y1:i\u22121)To\ndecode, we can plug p\u2032\n\u03b8(yi|x,y 1:i\u22121)into a standard beam decoder.\nRAG-Sequence For RAG-Sequence, the likelihood p(y|x)does not break into a conventional per-",
+        "pare two RAG formulations, one which conditions on the same retrieved passages\nacross the whole generated sequence, and another which can use different passages\nper token. We \ufb01ne-tune and evaluate our models on a wide range of knowledge-\nintensive NLP tasks and set the state of the art on three open domain QA tasks,\noutperforming parametric seq2seq models and task-speci\ufb01c retrieve-and-extract\narchitectures. For language generation tasks, we \ufb01nd that RAG models generate",
+        "documents. Figure 3 (right) shows that retrieving more documents leads to higher Rouge-L for\nRAG-Token at the expense of Bleu-1, but the effect is less pronounced for RAG-Sequence.\n10 20 30 40 50\nKR e t r i e v e dD o c s394041424344NQ Exact MatchRAG-Tok\nRAG-Seq\n10 20 30 40 50\nKR e t r i e v e dD o c s4050607080NQ Answer Recall @ KRAG-Tok\nRAG-Seq\nFixed DPR\nBM25\n10 20 30 40 50\nKR e t r i e v e dD o c s4850525456Bleu-1 / Rouge-L scoreRAG-Tok R-L\nRAG-Tok B-1\nRAG-Seq R-L\nRAG-Seq B-1"
+      ],
+      "latency": 37.316,
+      "retrieval_attempts": 2,
+      "retrieval_score": 0.425,
+      "critic_verdict": "approve",
+      "revision_count": 0,
+      "confidence": 0.87
+    },
+    {
+      "query": "What game-playing approach does DQN use to learn from raw pixels?",
+      "answer": "DQN uses a Q-learning approach with a convolutional neural network to learn from raw pixels [5].",
+      "contexts": [
+        "on all games. Our approach (labeled DQN) outperforms the other learning methods by a substantial\nmargin on all seven games despite incorporating almost no prior knowledge about the inputs.\nWe also include a comparison to the evolutionary policy search approach from [8] in the last three\nrows of table 1. We report two sets of results for this method. The HNeat Best score re\ufb02ects the\nresults obtained by using a hand-engineered object detector algorithm that outputs the locations and\n7",
+        "3D environment where the agent must learn to \ufb01nd rewards\nin randomly generated mazes from a visual input. The pre-\ncise details of our experimental setup can be found in Sup-\nplementary Section 8.\n5.1. Atari 2600 Games\nWe \ufb01rst present results on a subset of Atari 2600 games to\ndemonstrate the training speed of the new methods. Fig-\nure 1 compares the learning speed of the DQN algorithm\ntrained on an Nvidia K40 GPU with the asynchronous\nmethods trained using 16 CPU cores on \ufb01ve Atari 2600",
+        "icantly outperform DQN over 49 Atari games. On many\ngames Gorila reached the score achieved by DQN over 20\ntimes faster than DQN. We also note that a similar way of\nparallelizing DQN was proposed by (Chavez et al., 2015).\nIn earlier work, (Li & Schuurmans, 2011) applied the\nMap Reduce framework to parallelizing batch reinforce-\nment learning methods with linear function approximation.\nParallelism was used to speed up large matrix operations",
+        "an\u03f5-greedy policy with \u03f5= 0.05for a \ufb01xed number of steps. The lower table reports results of\nthe single best performing episode for HNeat and DQN. HNeat produces deterministic policies that\nalways get the same score while DQN used an \u03f5-greedy policy with \u03f5= 0.05.\ntypes of objects on the Atari screen. The HNeat Pixel score is obtained by using the special 8 color\nchannel representation of the Atari emulator that represents an object label map at each channel.",
+        "model is a convolutional neural network, trained with a variant of Q-learning,\nwhose input is raw pixels and whose output is a value function estimating future\nrewards. We apply our method to seven Atari 2600 games from the Arcade Learn-\ning Environment, with no adjustment of the architecture or learning algorithm. We\n\ufb01nd that it outperforms all previous approaches on six of the games and surpasses\na human expert on three of them.\n1 Introduction"
+      ],
+      "latency": 22.077,
+      "retrieval_attempts": 1,
+      "retrieval_score": 0.63,
+      "critic_verdict": "approve",
+      "revision_count": 0,
+      "confidence": 0.87
     },
     {
       "query": "How does DQN handle the non-stationarity of the target in Q-learning?",
-      "answer": "DQN handles the non-stationarity of the target in Q-learning by using a shared and slowly changing target network in computing the Q-learning loss.",
-      "latency": 45.121,
+      "answer": "DQN handles the non-stationarity of the target in Q-learning by using a technique that allows each step of experience to be potentially used in many weight updates [2], which enables greater data efficiency and helps to address the issue of non-stationarity.",
+      "contexts": [
+        "dient to optimise the loss function by stochastic gradient descent. If the weights are updated after\nevery time-step, and the expectations are replaced by single samples from the behaviour distribution\n\u03c1and the emulatorErespectively, then we arrive at the familiar Q-learning algorithm [26].\nNote that this algorithm is model-free : it solves the reinforcement learning task directly using sam-\nples from the emulator E, without explicitly constructing an estimate of E. It is also off-policy : it",
+        "Q-learning , is presented in Algorithm 1.\nThis approach has several advantages over standard online Q-learning [23]. First, each step of\nexperience is potentially used in many weight updates, which allows for greater data ef\ufb01ciency.\n4",
+        "approach was a special case that only worked in backgammon, perhaps because the stochasticity in\nthe dice rolls helps explore the state space and also makes the value function particularly smooth\n[19].\nFurthermore, it was shown that combining model-free reinforcement learning algorithms such as Q-\nlearning with non-linear function approximators [25], or indeed with off-policy learning [1] could\ncause the Q-network to diverge. Subsequently, the majority of work in reinforcement learning fo-",
+        "E[Rt|st=s]and is simply the expected return for follow-\ning policy\u03c0from states.\nIn value-based model-free reinforcement learning methods,\nthe action value function is represented using a function ap-\nproximator, such as a neural network. Let Q(s,a;\u03b8)be an\napproximate action-value function with parameters \u03b8. The\nupdates to\u03b8can be derived from a variety of reinforcement\nlearning algorithms. One example of such an algorithm is\nQ-learning, which aims to directly approximate the optimal",
+        "q-learning. Machine Learning , 22(1-3):283\u2013290, 1996.\nRecht, Benjamin, Re, Christopher, Wright, Stephen, and\nNiu, Feng. Hogwild: A lock-free approach to paralleliz-\ning stochastic gradient descent. In Advances in Neural\nInformation Processing Systems , pp. 693\u2013701, 2011.\nRiedmiller, Martin. Neural \ufb01tted q iteration\u2013\ufb01rst experi-\nences with a data ef\ufb01cient neural reinforcement learning\nmethod. In Machine Learning: ECML 2005 , pp. 317\u2013\n328. Springer Berlin Heidelberg, 2005."
+      ],
+      "latency": 48.633,
       "retrieval_attempts": 2,
-      "retrieval_score": 0.616,
+      "retrieval_score": 0.35,
       "critic_verdict": "revise",
       "revision_count": 1,
-      "confidence": 0.85
+      "confidence": 0.82
     },
     {
       "query": "What is the epsilon value used in PPO's clipped objective?",
-      "answer": "The epsilon value used in PPO's clipped objective is 0.2 [4]. The motivation for this objective is to penalize changes to the policy that move away from 1, as described in [4].",
-      "latency": 51.046,
+      "answer": "The epsilon value used in PPO's clipped objective is 0.2 [3].",
+      "contexts": [
+        "objective by clipping the probability ratio, which removes the incentive for moving rtoutside of the\ninterval [1\u25a1\u03f5,1 +\u03f5]. Finally, we take the minimum of the clipped and unclipped objective, so the\n\ufb01nal objective is a lower bound (i.e., a pessimistic bound) on the unclipped objective. With this\nscheme, we only ignore the change in probability ratio when it would make the objective improve,\nand we include it when it makes the objective worse. Note that LCLIP(\u03b8) =LCPI(\u03b8) to \ufb01rst order",
+        "0 1\nLinear interpolation factor0.02\n0.000.020.040.060.080.100.12 Et[KLt]\nLCPI=Et[rtAt]\nEt[clip(rt,1 ,1+)At]\nLCLIP=Et[min(rtAt,clip(rt,1 ,1+)At)]\nFigure 2: Surrogate objectives, as we interpolate between the initial policy parameter \u03b8old, and the updated\npolicy parameter, which we compute after one iteration of PPO. The updated policy has a KL divergence of\nabout 0.02 from the initial policy, and this is the point at which LCLIPis maximal. This plot corresponds",
+        "update; hence, we now consider how to modify the objective, to penalize changes to the policy that\nmovert(\u03b8) away from 1.\nThe main objective we propose is the following:\nLCLIP(\u03b8) =\u02c6Et[\nmin(rt(\u03b8)\u02c6At,clip(rt(\u03b8),1\u25a1\u03f5,1 +\u03f5)\u02c6At)]\n(7)\nwhere epsilon is a hyperparameter, say, \u03f5= 0.2. The motivation for this objective is as follows. The\n\ufb01rst term inside the min is LCPI. The second term, clip( rt(\u03b8),1\u25a1\u03f5,1+\u03f5)\u02c6At, modi\ufb01es the surrogate",
+        "the probability ratio r, for positive advantages (left) and negative advantages (right). The red circle on each\nplot shows the starting point for the optimization, i.e., r= 1. Note that LCLIPsums many of these terms.\nFigure 2 provides another source of intuition about the surrogate objective LCLIP. It shows how\nseveral objectives vary as we interpolate along the policy update direction, obtained by proximal",
+        "found that the KL penalty performed worse than the clipped surrogate objective, however, we\u2019ve\nincluded it here because it\u2019s an important baseline.\nIn the simplest instantiation of this algorithm, we perform the following steps in each policy\nupdate:\n\u2022Using several epochs of minibatch SGD, optimize the KL-penalized objective\nLKLPEN(\u03b8) =\u02c6Et[\u03c0\u03b8(at|st)\n\u03c0\u03b8old(at|st)\u02c6At\u25a1\u03b2KL[\u03c0\u03b8old(\u00b7|st),\u03c0\u03b8(\u00b7|st)]]\n(8)\n\u2022Computed=\u02c6Et[KL[\u03c0\u03b8old(\u00b7|st),\u03c0\u03b8(\u00b7|st)]]\n\u2013Ifd<d targ/1.5,\u03b2\u2190\u03b2/2\n\u2013Ifd>d targ\u00d71.5,\u03b2\u2190\u03b2\u00d72"
+      ],
+      "latency": 50.38,
       "retrieval_attempts": 2,
-      "retrieval_score": 0.2,
-      "critic_verdict": "approve",
+      "retrieval_score": 0.32,
+      "critic_verdict": "revise",
       "revision_count": 1,
       "confidence": 0.95
     },
     {
       "query": "What is the main motivation for using PPO over TRPO?",
-      "answer": "The main motivation for using PPO over TRPO is that TRPO is relatively complicated and not compatible with certain architectures, as stated in [3].",
-      "latency": 34.943,
+      "answer": "The main motivation for using PPO over TRPO is not explicitly stated in the provided chunks, but it can be inferred that PPO is preferred due to its ability to strike a favorable balance between sample complexity, simplicity, and wall-time [5], and its performance on continuous control tasks [3].",
+      "contexts": [
+        "Next, we compare PPO (with the \u201cclipped\u201d surrogate objective from Section 3) to several other\nmethods from the literature, which are considered to be e\ufb00ective for continuous problems. We com-\npared against tuned implementations of the following algorithms: trust region policy optimization\n[Sch+15b], cross-entropy method (CEM) [SL06], vanilla policy gradient with adaptive stepsize3,\n2HalfCheetah, Hopper, InvertedDoublePendulum, InvertedPendulum, Reacher, Swimmer, and Walker2d, all \u201c-v1\u201d",
+        "of learning.\nB Performance on More Atari Games\nHere we include a comparison of PPO against A2C on a larger collection of 49 Atari games. Figure 6\nshows the learning curves of each of three random seeds, while Table 6 shows the mean performance.\n10",
+        "PPO to several previous algorithms from the literature. On continuous control tasks, it performs\nbetter than the algorithms we compare against. On Atari, it performs signi\ufb01cantly better (in terms\nof sample complexity) than A2C and similarly to ACER though it is much simpler.\n1While DQN works well on game environments like the Arcade Learning Environment [Bel+15] with discrete\naction spaces, it has not been demonstrated to perform well on continuous control benchmarks such as those in",
+        "problem, where the the characteristics change over the course of learning. Hence, to achieve our goal\nof a \ufb01rst-order algorithm that emulates the monotonic improvement of TRPO, experiments show\nthat it is not su\ufb03cient to simply choose a \ufb01xed penalty coe\ufb03cient \u03b2and optimize the penalized\nobjective Equation (5) with SGD; additional modi\ufb01cations are required.\n2",
+        "ing simulated robotic locomotion and Atari game playing, and we show that PPO outperforms\nother online policy gradient methods, and overall strikes a favorable balance between sample\ncomplexity, simplicity, and wall-time.\n1 Introduction\nIn recent years, several di\ufb00erent approaches have been proposed for reinforcement learning with\nneural network function approximators. The leading contenders are deep Q-learning [Mni+15],"
+      ],
+      "latency": 44.86,
       "retrieval_attempts": 2,
-      "retrieval_score": 0.2,
-      "critic_verdict": "approve",
-      "revision_count": 0,
-      "confidence": 0.85
+      "retrieval_score": 0.24,
+      "critic_verdict": "revise",
+      "revision_count": 1,
+      "confidence": 0.6
     }
   ]
 }

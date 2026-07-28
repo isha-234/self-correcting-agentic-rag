@@ -1,6 +1,6 @@
 """
 api.py — FastAPI Server
-========================
+==================================================
 Exposes the multi-agent pipeline as a REST API.
 Logs every query to W&B (if WANDB_PROJECT is set).
 
@@ -21,7 +21,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# W&B is optional — only import if project is configured
 WANDB_PROJECT = os.getenv("WANDB_PROJECT")
 wandb = None
 if WANDB_PROJECT:
@@ -40,26 +39,25 @@ COLLECTION = os.getenv("CHROMA_COLLECTION", "rag_collection")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global pipeline
-    print("🚀  Starting Multi-Agent RAG API (Fireworks AI)...")
+    print("Starting Multi-Agent RAG API...")
 
     if wandb and WANDB_PROJECT:
         wandb.init(
             project=WANDB_PROJECT,
             name=f"api-run-{int(time.time())}",
             config={
-                "collection":       COLLECTION,
-                "model_retriever":  os.getenv("MODEL_RETRIEVER"),
-                "model_answerer":   os.getenv("MODEL_ANSWERER"),
-                "model_critic":     os.getenv("MODEL_CRITIC"),
-                "model_orchestrator": os.getenv("MODEL_ORCHESTRATOR"),
-                "embed_model":      os.getenv("EMBEDDING_MODEL"),
+                "collection":      COLLECTION,
+                "model_retriever": os.getenv("MODEL_RETRIEVER"),
+                "model_answerer":  os.getenv("MODEL_ANSWERER"),
+                "model_critic":    os.getenv("MODEL_CRITIC"),
+                "embed_model":     os.getenv("EMBEDDING_MODEL"),
             },
         )
 
     try:
         pipeline = MultiAgentRAGPipeline(collection_name=COLLECTION)
     except FileNotFoundError as e:
-        print(f"⚠️  ChromaDB not found — run ingest.py first\n   {e}")
+        print(f"ChromaDB not found! Run ingest.py first\n   {e}")
 
     yield
 
@@ -69,7 +67,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Multi-Agent RAG API",
-    description="4-agent RAG: Retriever → Answerer → Critic → Orchestrator (Fireworks AI)",
+    description="3-agent RAG: Retriever -> Answerer -> Critic",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -113,9 +111,9 @@ class IngestRequest(BaseModel):
 @app.get("/health")
 def health():
     return {
-        "status":    "ok" if pipeline else "degraded",
-        "message":   "ready" if pipeline else "run ingest.py first",
-        "provider":  "Fireworks AI",
+        "status":     "ok" if pipeline else "degraded",
+        "message":    "ready" if pipeline else "run ingest.py first",
+        "provider":   os.getenv("LLM_BASE_URL", "unset"),
         "collection": COLLECTION,
     }
 
@@ -131,11 +129,11 @@ async def query_endpoint(request: QueryRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    latency  = time.perf_counter() - t0
-    final    = state.get("final_result", {})
-    retr     = state.get("retriever_result", {})
-    critic   = state.get("critic_result", {})
-    timings  = state.get("node_timings", {})
+    latency = time.perf_counter() - t0
+    final   = state.get("final_result", {})
+    retr    = state.get("retriever_result", {})
+    critic  = state.get("critic_result", {})
+    timings = state.get("node_timings", {})
 
     response = QueryResponse(
         query=request.query,
@@ -162,7 +160,6 @@ async def query_endpoint(request: QueryRequest):
             "latency_retriever":  timings.get("retriever", 0),
             "latency_answerer":   timings.get("answerer_r0", 0),
             "latency_critic":     timings.get("critic", 0),
-            "latency_orchestrator": timings.get("orchestrator", 0),
         })
 
     return response
@@ -181,7 +178,7 @@ async def ingest(request: IngestRequest, background_tasks: BackgroundTasks):
         subprocess.run(cmd, check=True)
         global pipeline
         pipeline = MultiAgentRAGPipeline(collection_name=COLLECTION)
-        print("✅  Pipeline reloaded")
+        print("Pipeline reloaded")
 
     background_tasks.add_task(run_ingestion)
     return {"status": "ingestion_started", "docs_dir": request.docs_dir}

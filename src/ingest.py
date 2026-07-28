@@ -1,8 +1,7 @@
 """
 ingest.py — Document Ingestion & Embedding Pipeline
 =====================================================
-Loads PDFs/text files → chunks → embeds via Fireworks (nomic-embed)
-→ stores in ChromaDB on disk.
+Loads PDFs/text files -> chunks -> embeds -> stores in ChromaDB on disk.
 
 Usage:
     python ingest.py --docs_dir ./docs
@@ -28,25 +27,24 @@ from langchain.embeddings.base import Embeddings
 
 load_dotenv()
 
-# ─── Config from .env ─────────────────────────────────────────────────────────
-FIREWORKS_API_KEY  = os.getenv("EMBEDDING_API_KEY") or os.getenv("OPENAI_API_KEY")
-EMBEDDING_MODEL    = os.getenv("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5")
-EMBEDDING_BASE_URL = os.getenv("EMBEDDING_BASE_URL", "https://api.fireworks.ai/inference/v1")
+# --- Config from .env ---------------------------------------------------------
+EMBEDDING_API_KEY  = os.getenv("EMBEDDING_API_KEY")
+EMBEDDING_MODEL    = os.getenv("EMBEDDING_MODEL")
+EMBEDDING_BASE_URL = os.getenv("EMBEDDING_BASE_URL")
 CHROMA_DIR         = os.getenv("CHROMA_DIR", "./chroma_db")
 CHUNK_SIZE         = 500
 CHUNK_OVERLAP      = 50
 BATCH_SIZE         = 20
 
 
-# ─── Custom Fireworks Embeddings ──────────────────────────────────────────────
-# Bypasses langchain_openai.OpenAIEmbeddings entirely to avoid the
-# 'proxies' argument conflict between langchain-openai and openai>=1.35.
-# Uses the openai client directly — same API, no wrapper issues.
+# --- Embedding client ---------------------------------------------------------
+# Uses the openai client directly against a configurable base_url, so any
+# OpenAI-compatible embedding endpoint works without code changes.
 
-class FireworksEmbeddings(Embeddings):
+class APIEmbeddings(Embeddings):
     """
-    LangChain-compatible embedding class that calls Fireworks AI directly
-    using the openai client. Implements embed_documents and embed_query
+    LangChain-compatible embedding class that calls an OpenAI-compatible
+    endpoint directly. Implements embed_documents and embed_query,
     which is all ChromaDB needs.
     """
 
@@ -68,7 +66,7 @@ class FireworksEmbeddings(Embeddings):
             except Exception as e:
                 if "429" in str(e) or "RATE_LIMIT" in str(e):
                     wait = 2 ** attempt  # 1, 2, 4, 8, 16 seconds
-                    print(f"\n  ⏳ Rate limited — waiting {wait}s before retry...")
+                    print(f"\n   Rate limited — waiting {wait}s before retry...")
                     time.sleep(wait)
                 else:
                     raise
@@ -83,21 +81,21 @@ class FireworksEmbeddings(Embeddings):
         return response.data[0].embedding
 
 
-def get_embeddings() -> FireworksEmbeddings:
-    if not FIREWORKS_API_KEY:
+def get_embeddings() -> APIEmbeddings:
+    if not EMBEDDING_API_KEY:
         raise EnvironmentError(
-            "OPENAI_API_KEY not set.\n"
-            "Add your Fireworks key to .env:\n"
-            "  OPENAI_API_KEY=fw_your_key_here"
+            "EMBEDDING_API_KEY not set.\n"
+            "Add your embedding provider key to .env:\n"
+            "  EMBEDDING_API_KEY=your_key_here"
         )
-    return FireworksEmbeddings(
+    return APIEmbeddings(
         model=EMBEDDING_MODEL,
-        api_key=FIREWORKS_API_KEY,
+        api_key=EMBEDDING_API_KEY,
         base_url=EMBEDDING_BASE_URL,
     )
 
 
-# ─── Document Loaders ─────────────────────────────────────────────────────────
+# --- Document Loaders ---------------------------------------------------------
 
 def load_documents(docs_dir: str) -> List[Document]:
     docs_path = Path(docs_dir)
@@ -108,7 +106,7 @@ def load_documents(docs_dir: str) -> List[Document]:
     if not files:
         raise ValueError(f"No PDF or .txt files found in {docs_dir}")
 
-    print(f"\n📂  Found {len(files)} file(s) in {docs_dir}")
+    print(f"\n  Found {len(files)} file(s) in {docs_dir}")
     all_docs: List[Document] = []
 
     for file_path in tqdm(files, desc="Loading files"):
@@ -120,13 +118,13 @@ def load_documents(docs_dir: str) -> List[Document]:
                 doc.metadata["source"] = str(file_path.relative_to(docs_path))
             all_docs.extend(docs)
         except Exception as e:
-            print(f"  ⚠️  Skipping {file_path.name}: {e}")
+            print(f"    Skipping {file_path.name}: {e}")
 
-    print(f"✅  Loaded {len(all_docs)} page(s) from {len(files)} file(s)\n")
+    print(f"  Loaded {len(all_docs)} page(s) from {len(files)} file(s)\n")
     return all_docs
 
 
-# ─── Chunking ─────────────────────────────────────────────────────────────────
+# --- Chunking ---------------------------------------------------------
 
 def chunk_documents(docs: List[Document]) -> List[Document]:
     splitter = RecursiveCharacterTextSplitter(
@@ -143,11 +141,11 @@ def chunk_documents(docs: List[Document]) -> List[Document]:
         chunk.metadata["chunk_index"] = i
 
     avg = sum(len(c.page_content) for c in chunks) // max(len(chunks), 1)
-    print(f"✂️   Split into {len(chunks)} chunks (avg {avg} chars each)\n")
+    print(f"   Split into {len(chunks)} chunks (avg {avg} chars each)\n")
     return chunks
 
 
-# ─── Embedding + ChromaDB ──────────────────────────────────────────────────────
+# --- Embedding + ChromaDB ---------------------------------------------------------
 
 def build_vectorstore(
     chunks: List[Document],
@@ -160,9 +158,9 @@ def build_vectorstore(
     if reset and chroma_path.exists():
         import shutil
         shutil.rmtree(chroma_path)
-        print(f"🗑️   Wiped existing ChromaDB at {CHROMA_DIR}\n")
+        print(f"   Wiped existing ChromaDB at {CHROMA_DIR}\n")
 
-    print(f"⚡  Embedding {len(chunks)} chunks with {EMBEDDING_MODEL}...")
+    print(f"  Embedding {len(chunks)} chunks with {EMBEDDING_MODEL}...")
     print(f"    Batching {BATCH_SIZE} chunks per API call\n")
 
     import time as _time
@@ -179,18 +177,18 @@ def build_vectorstore(
         else:
             vectorstore.add_documents(batch)
         _time.sleep(2)  # 2s between every batch
-        
+
     vectorstore.persist()
     count = vectorstore._collection.count()
-    print(f"\n✅  ChromaDB ready — {count} vectors in '{collection_name}'")
+    print(f"\n  ChromaDB ready — {count} vectors in '{collection_name}'")
     print(f"    Persisted at: {Path(CHROMA_DIR).resolve()}\n")
     return vectorstore
 
 
-# ─── Smoke Test ───────────────────────────────────────────────────────────────
+# --- Smoke Test ---------------------------------------------------------
 
 def smoke_test(vectorstore: Chroma, query: str = "What is this document about?"):
-    print(f'🔍  Smoke test: "{query}"\n')
+    print(f'  Smoke test: "{query}"\n')
     results = vectorstore.similarity_search_with_relevance_scores(query, k=3)
     for rank, (doc, score) in enumerate(results, 1):
         source  = doc.metadata.get("source", "unknown")
@@ -200,7 +198,7 @@ def smoke_test(vectorstore: Chroma, query: str = "What is this document about?")
         print(f"       \"{snippet}...\"\n")
 
 
-# ─── Stats ────────────────────────────────────────────────────────────────────
+# --- Stats ---------------------------------------------------------
 
 def print_stats(docs: List[Document], chunks: List[Document]):
     sources = set(c.metadata["source"] for c in chunks)
@@ -213,7 +211,6 @@ def print_stats(docs: List[Document], chunks: List[Document]):
     print(f"  Chunks created    : {len(chunks)}")
     print(f"  Avg chunk length  : {avg} chars (~{avg//4} tokens)")
     print(f"  Embedding model   : {EMBEDDING_MODEL}")
-    print(f"  Embedding provider: Fireworks AI")
     print(f"  ChromaDB path     : {Path(CHROMA_DIR).resolve()}")
     print("=" * 55)
     for src in sorted(sources):
@@ -222,7 +219,7 @@ def print_stats(docs: List[Document], chunks: List[Document]):
     print()
 
 
-# ─── CLI ──────────────────────────────────────────────────────────────────────
+# --- CLI ---------------------------------------------------------
 
 def main():
     parser = argparse.ArgumentParser(description="Ingest documents into ChromaDB")
@@ -232,7 +229,7 @@ def main():
     parser.add_argument("--test_query", default="What is this document about?")
     args = parser.parse_args()
 
-    print("\n🚀  RAG Ingestion Pipeline (Fireworks AI)")
+    print("\n  RAG Ingestion Pipeline")
     print("─" * 45)
 
     docs        = load_documents(args.docs_dir)

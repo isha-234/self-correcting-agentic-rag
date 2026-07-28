@@ -18,19 +18,18 @@ from openai import OpenAI
 from langchain_community.vectorstores import Chroma
 from langchain.embeddings.base import Embeddings
 
-from pathlib import Path
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-# ─── Config from .env ─────────────────────────────────────────────────────────
-FIREWORKS_API_KEY  = os.getenv("EMBEDDING_API_KEY") or os.getenv("OPENAI_API_KEY")
-EMBEDDING_MODEL    = os.getenv("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5")
-EMBEDDING_BASE_URL = os.getenv("EMBEDDING_BASE_URL", "https://api.fireworks.ai/inference/v1")
+# --- Config from .env ---------------------------------------------------------
+EMBEDDING_API_KEY  = os.getenv("EMBEDDING_API_KEY")
+EMBEDDING_MODEL    = os.getenv("EMBEDDING_MODEL")
+EMBEDDING_BASE_URL = os.getenv("EMBEDDING_BASE_URL")
 CHROMA_DIR         = os.getenv("CHROMA_DIR", "./chroma_db")
 DEFAULT_TOP_K      = int(os.getenv("TOP_K", "5"))
 
 
-# ─── Custom Fireworks Embeddings (same class as ingest.py) ───────────────────
-class FireworksEmbeddings(Embeddings):
+# --- Embedding client ---------------------------------------------------------
+class APIEmbeddings(Embeddings):
     def __init__(self, model: str, api_key: str, base_url: str):
         self.model  = model
         self.client = OpenAI(api_key=api_key, base_url=base_url)
@@ -76,12 +75,12 @@ class Retriever:
                 f"Run ingestion first:\n"
                 f"  python ingest.py --docs_dir ./docs"
             )
-        if not FIREWORKS_API_KEY:
-            raise EnvironmentError("OPENAI_API_KEY (Fireworks key) not set in .env")
+        if not EMBEDDING_API_KEY:
+            raise EnvironmentError("EMBEDDING_API_KEY not set in .env")
 
-        embeddings = FireworksEmbeddings(
+        embeddings = APIEmbeddings(
             model=EMBEDDING_MODEL,
-            api_key=FIREWORKS_API_KEY,
+            api_key=EMBEDDING_API_KEY,
             base_url=EMBEDDING_BASE_URL,
         )
         self.vectorstore = Chroma(
@@ -123,12 +122,11 @@ class Retriever:
             "total_chunks":  self.vectorstore._collection.count(),
             "chroma_dir":    str(Path(CHROMA_DIR).resolve()),
             "embed_model":   EMBEDDING_MODEL,
-            "embed_provider":"Fireworks AI",
             "default_top_k": self.top_k,
         }
 
 
-# ─── Standalone test ──────────────────────────────────────────────────────────
+# --- Standalone test --------------------------------------------------------
 
 if __name__ == "__main__":
     collection = os.getenv("CHROMA_COLLECTION", "rag_collection")
